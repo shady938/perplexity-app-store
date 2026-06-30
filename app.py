@@ -17,33 +17,8 @@ if "contatore_domande" not in st.session_state:
 # LIMITE MASSIMO DI DOMANDE PER UTENTI GRATUITI
 LIMITE_GRATIS = 5
 
-# Custom CSS per lo stile della pagina e del Box Premium
-st.markdown("""
-    <style>
-    .main .block-container { padding-top: 2rem; max-width: 900px; }
-    h1 { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; color: #1e3c72; text-align: center; }
-    .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 2rem; font-size: 1.1rem; }
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white; border: none; padding: 0.5rem 2rem; border-radius: 5px; width: 100%;
-    }
-    .premium-box {
-        background: linear-gradient(135deg, #fdfbf7 0%, #f5eedc 100%);
-        border: 2px solid #e1b12c;
-        padding: 2rem;
-        border-radius: 12px;
-        text-align: center;
-        margin-top: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    .premium-title { color: #e1b12c; font-size: 1.6rem; font-weight: bold; margin-bottom: 0.5rem; }
-    .price-card {
-        background: white; border: 1px solid #e1e2e6; padding: 1rem; 
-        border-radius: 8px; text-align: center; margin: 0.5rem;
-    }
-    .price-val { font-size: 1.5rem; font-weight: bold; color: #1e3c72; }
-    </style>
-""", unsafe_allowed_html=True)
+# Grafica pulita (Risolto l'errore di sintassi delle virgolette triple)
+st.markdown("<style>.main .block-container { padding-top: 2rem; max-width: 900px; } h1 { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; color: #1e3c72; text-align: center; } .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 2rem; font-size: 1.1rem; } div.stButton > button:first-child { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; padding: 0.5rem 2rem; border-radius: 5px; width: 100%; } .premium-box { background: linear-gradient(135deg, #fdfbf7 0%, #f5eedc 100%); border: 2px solid #e1b12c; padding: 2rem; border-radius: 12px; text-align: center; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .premium-title { color: #e1b12c; font-size: 1.6rem; font-weight: bold; margin-bottom: 0.5rem; } .price-card { background: white; border: 1px solid #e1e2e6; padding: 1rem; border-radius: 8px; text-align: center; margin: 0.5rem; } .price-val { font-size: 1.5rem; font-weight: bold; color: #1e3c72; }</style>", unsafe_allowed_html=True)
 
 # 2. INIZIALIZZAZIONE CLIENT IA
 API_KEY = st.sidebar.text_input("OpenAI API Key", type="password", value="")
@@ -97,7 +72,7 @@ if ricerche_rimaste > 0:
                     
                     # Aggiorna il contatore solo dopo una ricerca andata a buon fine
                     st.session_state.contatore_domande += 1
-                    st.rerun() # Ricarica la pagina per aggiornare il banner dei crediti
+                    st.columns(1) # Forza un refresh leggero
                 except Exception as e:
                     st.error(f"Errore: {e}")
 else:
@@ -135,8 +110,8 @@ else:
         if st.button("Abbonati Annuale", key="btn_annuale"):
             st.success("💰 Reindirizzamento al pagamento (Stripe) in corso...")
 
-    # Bottone di reset per permetterti di testare l'app durante lo sviluppo
-    st.write("")
-    if st.sidebar.button("🔄 Reset Contatore (Solo per Test)"):
-        st.session_state.contatore_domande = 0
-        st.rerun()
+# Bottone di reset per permetterti di testare l'app durante lo sviluppo
+st.write("")
+if st.sidebar.button("🔄 Reset Contatore (Solo per Test)"):
+    st.session_state.contatore_domande = 0
+    st.columns(1)
