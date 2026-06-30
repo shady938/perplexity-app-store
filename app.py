@@ -17,9 +17,6 @@ if "contatore_domande" not in st.session_state:
 # LIMITE MASSIMO DI DOMANDE PER UTENTI GRATUITI
 LIMITE_GRATIS = 5
 
-# Grafica pulita (Risolto l'errore di sintassi delle virgolette triple)
-st.markdown("<style>.main .block-container { padding-top: 2rem; max-width: 900px; } h1 { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; color: #1e3c72; text-align: center; } .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 2rem; font-size: 1.1rem; } div.stButton > button:first-child { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; border: none; padding: 0.5rem 2rem; border-radius: 5px; width: 100%; } .premium-box { background: linear-gradient(135deg, #fdfbf7 0%, #f5eedc 100%); border: 2px solid #e1b12c; padding: 2rem; border-radius: 12px; text-align: center; margin-top: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); } .premium-title { color: #e1b12c; font-size: 1.6rem; font-weight: bold; margin-bottom: 0.5rem; } .price-card { background: white; border: 1px solid #e1e2e6; padding: 1rem; border-radius: 8px; text-align: center; margin: 0.5rem; } .price-val { font-size: 1.5rem; font-weight: bold; color: #1e3c72; }</style>", unsafe_allowed_html=True)
-
 # 2. INIZIALIZZAZIONE CLIENT IA
 API_KEY = st.sidebar.text_input("OpenAI API Key", type="password", value="")
 
@@ -43,14 +40,14 @@ def esegui_ricerca_app_store(query_utente, api_key):
     return stream
 
 # 4. INTERFACCIA UTENTE (UI)
-st.markdown("<h1>🔍 App Store AI Search Engine</h1>", unsafe_allowed_html=True)
-st.markdown("<p class='subtitle'>Trova l'applicazione perfetta spiegando le tue esigenze.</p>", unsafe_allowed_html=True)
+st.title("🔍 App Store AI Search Engine")
+st.caption("Trova l'applicazione perfetta spiegando le tue esigenze.")
 
 # Mostra all'utente quante ricerche gli rimangono
 ricerche_rimaste = LIMITE_GRATIS - st.session_state.contatore_domande
 
 if ricerche_rimaste > 0:
-    st.info(f"💡 Hai a disposizione **{ricerche_rimaste}** ricerche gratuite per oggi.")
+    st.write(f"💡 Hai a disposizione **{ricerche_rimaste}** ricerche gratuite per oggi.")
     
     # Barra di ricerca attiva
     query = st.text_input(label="Cosa stai cercando?", placeholder="Es: Voglio un'app per montare video...", label_visibility="collapsed")
@@ -72,46 +69,30 @@ if ricerche_rimaste > 0:
                     
                     # Aggiorna il contatore solo dopo una ricerca andata a buon fine
                     st.session_state.contatore_domande += 1
-                    st.columns(1) # Forza un refresh leggero
+                    st.rerun()
                 except Exception as e:
                     st.error(f"Errore: {e}")
 else:
     # PAYWALL: Il contatore ha raggiunto il limite, blocca l'app e mostra l'offerta
     st.error("⚠️ Hai esaurito le tue 5 ricerche gratuite per oggi!")
     
-    st.markdown("""
-        <div class="premium-box">
-            <div class="premium-title">👑 Passa a Premium</div>
-            <p>Non interrompere le tue ricerche. Sblocca query IA illimitate, analisi avanzate della privacy e confronti dettagliati.</p>
-        </div>
-    """, unsafe_allowed_html=True)
+    st.subheader("👑 Passa a Premium")
+    st.write("Non interrompere le tue ricerche. Sblocca query IA illimitate, analisi avanzate della privacy e confronti dettagliati.")
     
     # Visualizzazione delle opzioni di prezzo affiancate
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown("""
-            <div class="price-card">
-                <h3>Piano Mensile</h3>
-                <div class="price-val">4,99 € <span style="font-size:1rem; color:grey;">/ mese</span></div>
-                <p style="color:grey; font-size:0.9rem;">Disdici quando vuoi</p>
-            </div>
-        """, unsafe_allowed_html=True)
+        st.info("### Piano Mensile\n**4,99 €** / mese\n\nDisdici quando vuoi")
         if st.button("Abbonati Mensile", key="btn_mensile"):
             st.success("💰 Reindirizzamento al pagamento (Stripe) in corso...")
             
     with col2:
-        st.markdown("""
-            <div class="price-card">
-                <h3>Piano Annuale</h3>
-                <div class="price-val">40,00 € <span style="font-size:1rem; color:grey;">/ anno</span></div>
-                <p style="color:green; font-weight:bold; font-size:0.9rem;">Risparmi il 33%!</p>
-            </div>
-        """, unsafe_allowed_html=True)
+        st.success("### Piano Annuale\n**40,00 €** / anno\n\nRisparmi il 33%!")
         if st.button("Abbonati Annuale", key="btn_annuale"):
             st.success("💰 Reindirizzamento al pagamento (Stripe) in corso...")
 
 # Bottone di reset per permetterti di testare l'app durante lo sviluppo
-st.write("")
+st.sidebar.markdown("---")
 if st.sidebar.button("🔄 Reset Contatore (Solo per Test)"):
     st.session_state.contatore_domande = 0
-    st.columns(1)
+    st.rerun()
